@@ -13,13 +13,18 @@ class Rules:
         }
 
     def __is_valid_param(self, shape_name: str, param_vector: list):
+        rel_tol = 1e-3
         if param_vector is None:
             return False
         shape = parameter.Shape(shape_name)
         if len(shape.params) != len(param_vector):
             return False
         for i, p in enumerate(param_vector):
-            if p < shape.params[i].info['min_value'] or p > shape.params[i].info['max_value']:
+            min_value = shape.params[i].info['min_value']
+            max_value = shape.params[i].info['max_value']
+            if p < min_value and abs(p - min_value) > rel_tol:
+                return False
+            elif p > max_value and abs(p - max_value) > rel_tol:
                 return False
         return True
 
