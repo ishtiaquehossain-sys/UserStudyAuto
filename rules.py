@@ -9,9 +9,7 @@ class Rules:
         reload(parameter)
         self.func_map = {
             'bench': self.__make_bench,
-            'chair': self.__make_chair,
-            'sofa': self.__make_sofa,
-            'table': self.__make_table
+            'chair': self.__make_chair
         }
 
     def __is_valid_param(self, shape_name: str, param_vector: list):
@@ -73,28 +71,6 @@ class Rules:
         return image
 
     def __make_chair(self, image: Image, drawer: Drawer, param_vector: list):
-        '''
-        :param image: PIL image
-        :param drawer: draws shapes on input image
-        :param param_vector: procedural parameters
-        :return: procedurally constructed image
-        '''
-        # Implement your rule between here
-        # and here
-        return image
-
-    def __make_sofa(self, image: Image, drawer: Drawer, param_vector: list):
-        '''
-        :param image: PIL image
-        :param drawer: draws shapes on input image
-        :param param_vector: procedural parameters
-        :return: procedurally constructed image
-        '''
-        # Implement your rule between here
-        # and here
-        return image
-
-    def __make_table(self, image: Image, drawer: Drawer, param_vector: list):
         '''
         :param image: PIL image
         :param drawer: draws shapes on input image

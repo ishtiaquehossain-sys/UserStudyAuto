@@ -34,7 +34,7 @@ class ClusterMaker(QThread):
         super(ClusterMaker, self).__init__()
         self.thresh = 50.0
         self.num_clusters = 6
-        self.shape_names = ['bench', 'chair', 'sofa', 'table']
+        self.shape_names = ['bench', 'chair']
         self.true_images = {}
         self.pred_images = {}
         self.true_features = {}

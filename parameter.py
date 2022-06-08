@@ -44,13 +44,5 @@ class Shape:
             self.params.append(Parameter('dummy_scalar', 's', 60, 80, 3))
             self.params.append(Parameter('dummy_binary', 'b'))
             self.params.append(Parameter('dummy_integer', 'i', 0, 5))
-        elif shape_name == 'sofa':
-            self.params.append(Parameter('dummy_scalar', 's', 60, 80, 3))
-            self.params.append(Parameter('dummy_binary', 'b'))
-            self.params.append(Parameter('dummy_integer', 'i', 0, 5))
-        elif shape_name == 'table':
-            self.params.append(Parameter('dummy_scalar', 's', 60, 80, 3))
-            self.params.append(Parameter('dummy_binary', 'b'))
-            self.params.append(Parameter('dummy_integer', 'i', 0, 5))
         else:
             quit_program('Invalid shape name')

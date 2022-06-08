@@ -7,9 +7,7 @@ class ShapeGenerator:
         self.rules = Rules()
         self.predictors = {
             'bench': Predictor('bench'),
-            'chair': Predictor('chair'),
-            'sofa': Predictor('sofa'),
-            'table': Predictor('table')
+            'chair': Predictor('chair')
         }
 
     def get_image(self, shape_name: str, index: int):

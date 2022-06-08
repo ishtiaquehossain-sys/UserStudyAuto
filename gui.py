@@ -25,7 +25,7 @@ class Gui(QMainWindow):
         self.setWindowTitle("Viewer")
 
         self.shape_selector = QtWidgets.QComboBox(self)
-        self.shape_selector.addItems(['bench', 'chair', 'sofa', 'table'])
+        self.shape_selector.addItems(['bench', 'chair'])
         self.train_button = QtWidgets.QPushButton(self)
         self.train_button.setText('Train')
         self.num_cluster_label = QtWidgets.QLabel(self)
