@@ -1,6 +1,7 @@
-from PIL import Image, ImageDraw, ImageOps
+from PIL import Image, ImageOps
 from importlib import reload
 import parameter
+from drawer import Drawer
 
 
 class Rules:
@@ -28,12 +29,12 @@ class Rules:
         image = Image.new('L', (512, 512))
         if not self.__is_valid_param(shape_name, param_vector):
             return ImageOps.invert(image)
-        drawer = ImageDraw.Draw(image)
+        drawer = Drawer(image)
         image = self.func_map[shape_name](image, drawer, param_vector)
         image = ImageOps.invert(image)
         return image
 
-    def __make_bench(self, image: Image, drawer: ImageDraw, param_vector: list):
+    def __make_bench(self, image: Image, drawer: Drawer, param_vector: list):
         '''
         :param image: PIL image
         :param drawer: draws shapes on input image
@@ -49,29 +50,29 @@ class Rules:
         bottom_bar = int(param_vector[5])
         # draw the legs
         xy = (22, 256 - height // 2, 22 + leg_width, 256 + height // 2)
-        drawer.rectangle(xy, fill=255)
+        drawer.rectangle(xy)
         xy = (488 - leg_width, 256 - height // 2, 488, 256 + height // 2)
-        drawer.rectangle(xy, fill=255)
+        drawer.rectangle(xy)
         # draw the seat
         seat_location = 256 - height // 2 + int(height * (1.0 - leg_height_percent))
         xy = (22, seat_location - seat_height // 2, 488, seat_location + seat_height // 2)
-        drawer.rectangle(xy, fill=255)
+        drawer.rectangle(xy)
         # draw horizontal bars
         start = 256 - height // 2
         offset = (seat_location - seat_height // 2 - 256 + height // 2) // num_hbars
         for i in range(num_hbars):
             xy = (22, start, 488, start + offset // 2)
-            drawer.rectangle(xy, fill=255)
+            drawer.rectangle(xy)
             start = start + offset
         # draw the bottom bar
         if bottom_bar != 0:
             bbar_location = 256 - height // 2 + int(height * (1.0 - leg_height_percent/2))
             xy = (22, bbar_location - 2, 488, bbar_location + 2)
-            drawer.rectangle(xy, fill=255)
+            drawer.rectangle(xy)
         # and here
         return image
 
-    def __make_chair(self, image: Image, drawer: ImageDraw, param_vector: list):
+    def __make_chair(self, image: Image, drawer: Drawer, param_vector: list):
         '''
         :param image: PIL image
         :param drawer: draws shapes on input image
@@ -82,7 +83,7 @@ class Rules:
         # and here
         return image
 
-    def __make_sofa(self, image: Image, drawer: ImageDraw, param_vector: list):
+    def __make_sofa(self, image: Image, drawer: Drawer, param_vector: list):
         '''
         :param image: PIL image
         :param drawer: draws shapes on input image
@@ -93,7 +94,7 @@ class Rules:
         # and here
         return image
 
-    def __make_table(self, image: Image, drawer: ImageDraw, param_vector: list):
+    def __make_table(self, image: Image, drawer: Drawer, param_vector: list):
         '''
         :param image: PIL image
         :param drawer: draws shapes on input image
