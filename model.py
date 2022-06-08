@@ -1,5 +1,6 @@
 import os
 import sys
+import random
 import numpy as np
 from tqdm import tqdm
 from PIL import Image
@@ -17,13 +18,17 @@ import parameter
 
 
 class ImgDataset(Dataset):
-    def __init__(self, shape_name: str):
+    def __init__(self, shape_name: str, max_len: int = None):
         super(ImgDataset, self).__init__()
         reload(rules)
         reload(parameter)
         self.shape = parameter.Shape(shape_name)
         param_domain = [np.linspace(param.info['min_value'], param.info['max_value'], param.info['num_levels']) for param in self.shape.params]
         param_vectors = [p for p in product(*param_domain)]
+        random.shuffle(param_vectors)
+        if max_len is not None:
+            if len(param_vectors) > max_len:
+                param_vectors = random.choices(param_vectors, k=max_len)
         rules_ = rules.Rules()
         self.num_data_points = len(param_vectors)
         self.images = []
@@ -187,7 +192,7 @@ class Trainer(QThread):
     def __init__(self, shape_name: str):
         super(Trainer, self).__init__()
         self.shape_name = shape_name
-        dataset = ImgDataset(shape_name)
+        dataset = ImgDataset(shape_name, max_len=3000)
         indices = (list(range(len(dataset))))
         np.random.shuffle(indices)
         split_point = int(np.floor(0.9 * len(dataset)))
