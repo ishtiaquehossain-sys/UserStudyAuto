@@ -27,7 +27,7 @@ class Gui(QMainWindow):
         self.shape_selector = QtWidgets.QComboBox(self)
         self.shape_selector.addItems(['bench', 'chair'])
         self.train_button = QtWidgets.QPushButton(self)
-        self.train_button.setText('Train')
+        self.train_button.setText('Predict')
         self.num_cluster_label = QtWidgets.QLabel(self)
         self.num_cluster_label.setText('Number of clusters:')
         self.num_cluster_input = QtWidgets.QLineEdit(self)
@@ -52,21 +52,21 @@ class Gui(QMainWindow):
         self.cluster_button.adjustSize()
 
         self.shape_selector.move(50, 50)
-        self.train_button.move(130, 50)
-        self.num_cluster_label.move(820, 55)
-        self.num_cluster_input.move(960, 50)
-        self.cluster_button.move(1000, 50)
+        self.train_button.move(1000, 50)
+        self.num_cluster_label.move(820, 85)
+        self.num_cluster_input.move(960, 80)
+        self.cluster_button.move(1000, 80)
         self.summary_pane.move(1090, 50)
-        self.true_img_pane.move(50, 100)
-        self.pred_img_pane.move(570, 100)
-        self.true_legend.move(280, 620)
-        self.pred_legend.move(790, 620)
+        self.true_img_pane.move(50, 130)
+        self.pred_img_pane.move(570, 130)
+        self.true_legend.move(280, 650)
+        self.pred_legend.move(790, 650)
         self.progress_bar.move(50, 730)
         self.task_description.move(160, 730)
 
         self.shape_selector.activated[str].connect(self.show_summary)
         self.train_button.clicked.connect(self.train)
-        self.cluster_button.clicked.connect(self.re_cluster)
+        self.cluster_button.clicked.connect(lambda: self.re_cluster(True))
         self.controller.cluster_maker.progress_signal.connect(self.update_progress_bar)
         self.controller.cluster_maker.finished.connect(self.__cluster_finished)
 
@@ -119,7 +119,7 @@ class Gui(QMainWindow):
     def __train_finished(self):
         self.progress_bar.hide()
         self.task_description.setText('')
-        self.train_button.setText('Train')
+        self.train_button.setText('Predict')
         if self.task_thread.is_model_dirty:
             self.re_cluster(False)
         self.task_thread = None
