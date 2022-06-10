@@ -41,7 +41,6 @@ class Gui(QMainWindow):
         self.pred_legend = QtWidgets.QLabel(self)
         self.progress_bar = QtWidgets.QProgressBar(self)
         self.task_description = QtWidgets.QLabel(self)
-        self.task_description.setText('Clustering')
 
         self.shape_selector.adjustSize()
         self.train_button.adjustSize()
