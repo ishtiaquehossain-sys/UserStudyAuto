@@ -34,14 +34,23 @@ class Shape:
     def __init__(self, shape_name: str):
         self.params = []
         if shape_name == 'bench':
-            self.params.append(Parameter('height', 's', 150, 220, 3))
-            self.params.append(Parameter('leg_height_percent', 's', 0.4, 0.6, 3))
-            self.params.append(Parameter('leg_width', 's', 5, 30, 3))
-            self.params.append(Parameter('seat_height', 's', 5, 30, 3))
+            self.params.append(Parameter('height', 's', 0.293, 0.43, 3))
+            self.params.append(Parameter('leg_height', 's', 0.14, 0.24, 3))
+            self.params.append(Parameter('leg_width', 's', 0.01, 0.05, 3))
+            self.params.append(Parameter('seat_height', 's', 0.01, 0.05, 3))
             self.params.append(Parameter('num_hbars', 'i', 2, 14))
             self.params.append(Parameter('bottom_bar', 'b'))
         elif shape_name == 'chair':
-            self.params.append(Parameter('dummy_scalar', 's', 60, 80, 3))
+            """
+            Define your parameter vector in this block
+            Use the following format when adding element to the parameter vector
+            Parameter(name_of_parameter,                                # String, specifying name of the parameter
+                      type_of_parameter,                                # 's', 'i' or 'b', for scalar, integer or binary respectively
+                      minimum_allowable_value,                          # Ignore if binary parameter 
+                      maximum_allowable_value,                          # Ignore if binary parameter
+                      number_of_samples_between_minimum_and_maximum)    # Ignore if integer or binary parameter
+            """
+            self.params.append(Parameter('dummy_scalar', 's', 0, 1, 3))
             self.params.append(Parameter('dummy_binary', 'b'))
             self.params.append(Parameter('dummy_integer', 'i', 0, 5))
         else:
