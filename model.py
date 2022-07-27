@@ -23,7 +23,7 @@ class ImgDataset(Dataset):
         reload(rules)
         reload(parameter)
         self.shape = parameter.Shape(shape_name)
-        param_domain = [np.linspace(param.info['min_value'], param.info['max_value'], param.info['num_levels']) for param in self.shape.params]
+        param_domain = [np.linspace(param.info['min_value'], param.info['max_value'], 5) for param in self.shape.params]
         param_vectors = [p for p in product(*param_domain)]
         random.shuffle(param_vectors)
         if max_len is not None:
@@ -151,7 +151,7 @@ class ImgModel(BaseModel):
             if param.info['param_type'] == 's':
                 self.task_modules.append(TaskModule('s', in_c, 1))
             elif param.info['param_type'] == 'i':
-                self.task_modules.append(TaskModule('i', in_c, param.info['num_levels']))
+                self.task_modules.append(TaskModule('i', in_c, param.info['max_value']-param.info['min_value']+1))
             elif param.info['param_type'] == 'b':
                 self.task_modules.append(TaskModule('b', in_c, 1))
 

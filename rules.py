@@ -55,25 +55,25 @@ class Rules:
         num_hbars = int(param_vector[4])
         bottom_bar = int(param_vector[5])
         # draw the legs
-        xy = (0.043, 0.5 - height / 2, 0.043 + leg_width, 0.5 + height / 2)
+        xy = (0.045, 0.5 - height / 2, 0.045 + leg_width, 0.5 + height / 2)
         drawer.rectangle(xy)
-        xy = (0.953 - leg_width, 0.5 - height / 2, 0.953, 0.5 + height / 2)
+        xy = (0.955 - leg_width, 0.5 - height / 2, 0.955, 0.5 + height / 2)
         drawer.rectangle(xy)
         # draw the seat
         seat_location = 0.5 - height / 2 + (height - leg_height)
-        xy = (0.043, seat_location - seat_height / 2, 0.953, seat_location + seat_height / 2)
+        xy = (0.045, seat_location - seat_height / 2, 0.955, seat_location + seat_height / 2)
         drawer.rectangle(xy)
         # draw horizontal bars
         start = 0.5 - height / 2
         offset = (seat_location - seat_height / 2 - 0.5 + height / 2) / num_hbars
         for i in range(num_hbars):
-            xy = (0.043, start, 0.953, start + offset / 2)
+            xy = (0.045, start, 0.955, start + offset / 2)
             drawer.rectangle(xy)
             start = start + offset
         # draw the bottom bar
         if bottom_bar != 0:
             bbar_location = 0.5 - height / 2 + (height - leg_height) + leg_height / 2
-            xy = (0.043, bbar_location - 0.006, 0.953, bbar_location + 0.006)
+            xy = (0.045, bbar_location - 0.006, 0.955, bbar_location + 0.006)
             drawer.rectangle(xy)
         # and here
         return image

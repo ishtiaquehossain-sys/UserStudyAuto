@@ -12,12 +12,7 @@ class Controller:
     def __init__(self):
         self.cluster_maker = ClusterMaker()
 
-    def remake_images_clusters(self):
-        self.cluster_maker.cluster_only = False
-        self.cluster_maker.start()
-
-    def remake_clusters(self):
-        self.cluster_maker.cluster_only = True
+    def make_clusters(self):
         self.cluster_maker.start()
 
     def get_summary(self, shape_name: str):
@@ -42,8 +37,6 @@ class ClusterMaker(QThread):
         self.distances = {}
         self.rearranged_ids = {}
         self.summary_images = {}
-        self.cluster_only = False
-        self.is_active = False
 
     def __get_features(self, images: list[Image], feature_extractor: torch.nn.Module):
         transform = transforms.Compose([
@@ -83,27 +76,26 @@ class ClusterMaker(QThread):
         return c_image
 
     def run(self):
-        if not self.cluster_only:
-            generator = ShapeGenerator()
-            for shape in self.shape_names:
-                self.true_images[shape] = []
-                self.pred_images[shape] = []
-                for i in range(5):
-                    for j in range(10):
-                        index = str(i) + str(j)
-                        self.true_images[shape].append(
-                            Image.open(os.path.join('shapes', shape, index + '.png')).convert('L'))
-                        self.pred_images[shape].append(generator.get_image(shape, int(index)))
-            feature_extractor = models.alexnet(pretrained=True)
-            feature_extractor.classifier = feature_extractor.classifier[:-1]
-            if torch.cuda.is_available():
-                feature_extractor = feature_extractor.cuda()
+        generator = ShapeGenerator()
+        for shape in self.shape_names:
+            self.true_images[shape] = []
+            self.pred_images[shape] = []
+            for i in range(5):
+                for j in range(10):
+                    index = str(i) + str(j)
+                    self.true_images[shape].append(
+                        Image.open(os.path.join('shapes', shape, index + '.png')).convert('L'))
+                    self.pred_images[shape].append(generator.get_image(shape, int(index)))
+        feature_extractor = models.alexnet(pretrained=True)
+        feature_extractor.classifier = feature_extractor.classifier[:-1]
+        if torch.cuda.is_available():
+            feature_extractor = feature_extractor.cuda()
 
-            for x, shape in enumerate(self.shape_names):
-                self.true_features[shape] = self.__get_features(self.true_images[shape], feature_extractor)
-                self.pred_features[shape] = self.__get_features(self.pred_images[shape], feature_extractor)
-                self.distances[shape] = self.__get_distances(self.true_features[shape], self.pred_features[shape])
-                self.progress_signal.emit(int((x + 1) * 50.0 / len(self.shape_names)))
+        for x, shape in enumerate(self.shape_names):
+            self.true_features[shape] = self.__get_features(self.true_images[shape], feature_extractor)
+            self.pred_features[shape] = self.__get_features(self.pred_images[shape], feature_extractor)
+            self.distances[shape] = self.__get_distances(self.true_features[shape], self.pred_features[shape])
+            self.progress_signal.emit(int((x + 1) * 50.0 / len(self.shape_names)))
 
         color_palette = []
         for i in range(self.num_clusters):
@@ -118,13 +110,13 @@ class ClusterMaker(QThread):
             kmeans = KMeans(n_clusters=self.num_clusters, random_state=0)
             kmeans.fit(self.true_features[shape][mismatch_idx].tolist())
             self.rearranged_ids[shape] = match_idx
-            colors = [(0, 0, 0)] * len(match_idx)
+            colors = [(34, 139, 34)] * len(match_idx)
             for i in range(self.num_clusters):
                 cluster = sorted(np.array(mismatch_idx)[np.where(kmeans.labels_ == i)[0].tolist()])
                 self.rearranged_ids[shape] = self.rearranged_ids[shape] + cluster
-                colors = colors + [color_palette[i]] * len(cluster)
+                colors = colors + [(0, 0, 0)] * len(cluster)
 
-            summary_img = Image.new('RGB', (640, 640))
+            summary_img = Image.new('RGBA', (680, 640))
             for i in range(5):
                 for j in range(10):
                     index = i * 10 + j
@@ -132,12 +124,12 @@ class ClusterMaker(QThread):
                         self.true_images[shape][self.rearranged_ids[shape][index]],
                         colors[index]
                     ).resize((64, 64))
-                    summary_img.paste(paste_img, (j * 64, i * 128))
+                    summary_img.paste(paste_img, (i * 138, j * 64))
                     paste_img = self.__colorize_image(
                         self.pred_images[shape][self.rearranged_ids[shape][index]],
                         colors[index]
                     ).resize((64, 64))
-                    summary_img.paste(paste_img, (j * 64, 64 + i * 128))
+                    summary_img.paste(paste_img, (64 + i * 138, j * 64))
             self.summary_images[shape] = summary_img
             self.progress_signal.emit(int(50.0 + (x + 1) * 50.0 / len(self.shape_names)))
 
