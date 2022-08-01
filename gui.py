@@ -1,4 +1,3 @@
-from model import Trainer
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QMainWindow
@@ -18,9 +17,6 @@ class Gui(QMainWindow):
 
     def __init__(self):
         super().__init__()
-
-        self.controller = Controller()
-
         self.setFixedSize(1744, 660)
         self.setWindowTitle("Viewer")
 
@@ -50,15 +46,15 @@ class Gui(QMainWindow):
         self.progress_bar.move(10, 620)
         self.task_description.move(120, 625)
 
-        self.shape_selector.activated[str].connect(self.show_summary)
-        self.train_button.clicked.connect(self.train)
-        self.controller.cluster_maker.progress_signal.connect(self.update_progress_bar)
-
-        self.task_thread = None
+        self.train_thread = None
 
         self.show()
 
-        self.re_cluster()
+        self.controller = Controller()
+        self.shape_selector.activated[str].connect(self.show_summary)
+        self.train_button.clicked.connect(self.train)
+
+        self.refresh_ui()
 
     def __enable_interaction(self):
         self.shape_selector.setDisabled(False)
@@ -108,40 +104,42 @@ class Gui(QMainWindow):
         self.true_legend.setText('Original')
         self.pred_legend.setText('Procedural')
 
+    def train(self):
+        if self.train_thread is not None:
+            self.train_thread.stop()
+        else:
+            self.train_thread = self.controller.start_training(self.shape_selector.currentText())
+            if self.train_thread is not None:
+                self.progress_bar.reset()
+                self.progress_bar.show()
+                self.task_description.setText('Training')
+                self.train_button.setText('Stop')
+                self.train_thread.progress_signal.connect(self.update_progress_bar)
+                self.train_thread.finished.connect(self.__train_finished)
+
     def __train_finished(self):
         self.progress_bar.hide()
         self.task_description.setText('')
         self.train_button.setText('Predict')
-        if self.task_thread.is_model_dirty:
-            self.re_cluster()
-        self.task_thread = None
+        if self.train_thread.is_dirty:
+            self.refresh_ui()
+            self.train_thread.is_dirty = False
+        self.train_thread = None
 
-    def train(self):
-        if isinstance(self.task_thread, Trainer):
-            self.task_thread.stop()
-        else:
-            self.progress_bar.reset()
-            self.progress_bar.show()
-            self.task_description.setText('Training')
-            self.train_button.setText('Stop')
-            self.task_thread = Trainer(self.shape_selector.currentText())
-            self.task_thread.progress_signal.connect(self.update_progress_bar)
-            self.task_thread.finished.connect(self.__train_finished)
-            self.task_thread.start()
-
-    def __cluster_finished(self):
-        self.progress_bar.hide()
-        self.task_description.setText('')
-        self.__enable_interaction()
-        self.show_summary()
-
-    def re_cluster(self):
+    def refresh_ui(self):
         self.progress_bar.reset()
         self.progress_bar.show()
         self.task_description.setText('Preparing shapes')
         self.__disable_interaction()
-        self.controller.make_clusters()
-        self.controller.cluster_maker.finished.connect(self.__cluster_finished)
+        self.controller.shape_sorter.progress_signal.connect(self.update_progress_bar)
+        self.controller.shape_sorter.start()
+        self.controller.shape_sorter.finished.connect(self.__refresh_ui_finished)
+
+    def __refresh_ui_finished(self):
+        self.progress_bar.hide()
+        self.task_description.setText('')
+        self.__enable_interaction()
+        self.show_summary()
 
     def update_progress_bar(self, value: int):
         self.progress_bar.setValue(value)

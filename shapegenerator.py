@@ -1,20 +1,16 @@
-from model import Predictor
-from rules import Rules
+import bench
+import chair
+from importlib import reload
 
 
 class ShapeGenerator:
     def __init__(self):
-        self.rules = Rules()
-        self.predictors = {
-            'bench': Predictor('bench'),
-            'chair': Predictor('chair')
-        }
+        reload(bench)
+        reload(chair)
+        self.shapes = dict()
+        self.shapes['bench'] = bench.Bench()
+        self.shapes['chair'] = chair.Chair()
 
     def get_image(self, shape_name: str, index: int):
-        '''
-        :param shape_name: shape category
-        :param index: shape index
-        :return: A 512X512 PIL image
-        '''
-        param_vector = self.predictors[shape_name].predict(index)
-        return self.rules.make_shape(shape_name, param_vector)
+        image = self.shapes[shape_name].get_image(index)
+        return image
