@@ -21,7 +21,7 @@ class Gui(QMainWindow):
         self.setWindowTitle("Viewer")
 
         self.shape_selector = QtWidgets.QComboBox(self)
-        self.shape_selector.addItems(['bench', 'chair'])
+        self.shape_selector.addItems(['bench', 'table'])
         self.train_button = QtWidgets.QPushButton(self)
         self.train_button.setText('Predict')
         self.summary_pane = ClickableLabel(self)

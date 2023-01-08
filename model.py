@@ -32,7 +32,7 @@ class ImgDataset(Dataset):
         self.transform = transforms.Compose([
             transforms.ToTensor(),
             transforms.Normalize([0.5], [0.5]),
-            transforms.Resize((256, 256))
+            transforms.Resize((128, 128))
         ])
 
     def __getitem__(self, index):
@@ -70,25 +70,21 @@ class FeatureExtractor(BaseModel):
     def __init__(self, in_c):
         super(FeatureExtractor, self).__init__()
         self.features = nn.Sequential(
-            self.conv_layer_set(in_c, 4, 3, 1, 1),
+            self.conv_layer_set(in_c, 64, 3, 1, 1),
             nn.MaxPool2d(2),
-            self.conv_layer_set(4, 8, 3, 1, 1),
+            self.conv_layer_set(64, 64, 3, 1, 1),
             nn.MaxPool2d(2),
-            self.conv_layer_set(8, 16, 3, 1, 1),
+            self.conv_layer_set(64, 64, 3, 1, 1),
             nn.MaxPool2d(2),
-            self.conv_layer_set(16, 32, 3, 1, 1),
+            self.conv_layer_set(64, 64, 3, 1, 1),
             nn.MaxPool2d(2),
-            self.conv_layer_set(32, 64, 3, 1, 1),
+            self.conv_layer_set(64, 64, 3, 1, 1),
             nn.MaxPool2d(2),
-            self.conv_layer_set(64, 128, 3, 1, 1),
-            nn.MaxPool2d(2),
-            self.conv_layer_set(128, 256, 3, 1, 1),
-            nn.MaxPool2d(2),
-            self.conv_layer_set(256, 512, 3, 1, 1),
+            self.conv_layer_set(64, 64, 3, 1, 1),
             nn.MaxPool2d(2),
             nn.Flatten(),
         )
-        self.out_c = 512
+        self.out_c = 256
 
     def forward(self, x):
         x = self.features(x)
@@ -100,8 +96,8 @@ class TaskModule(BaseModel):
         super(TaskModule, self).__init__()
         self.task_type = task_type
         module = list()
-        module.append(self.fc_layer_set(in_c, 256))
-        module.append(self.fc_layer_set(256, 64))
+        module.append(self.fc_layer_set(in_c, 64))
+        module.append(self.fc_layer_set(64, 64))
         module.append(self.fc_layer_set(64, 16))
         module.append(nn.Linear(16, out_c))
         if task_type == 's':
@@ -276,7 +272,7 @@ class Predictor(QThread):
         transform = transforms.Compose([
             transforms.ToTensor(),
             transforms.Normalize([0.5], [0.5]),
-            transforms.Resize((256, 256))
+            transforms.Resize((128, 128))
         ])
         img = torch.unsqueeze(transform(img), 0)
         if torch.cuda.is_available():

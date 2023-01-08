@@ -14,7 +14,7 @@ class ShapeSorter(QThread):
 
     def __init__(self):
         super(ShapeSorter, self).__init__()
-        self.shape_names = ['bench', 'chair']
+        self.shape_names = ['bench', 'table']
         self.thresh = 30.0
         self.num_clusters = 6
         self.true_images = {}

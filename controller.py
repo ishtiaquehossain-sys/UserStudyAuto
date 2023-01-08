@@ -8,7 +8,7 @@ class Controller:
         super(Controller, self).__init__()
         self.generator = None
         self.shape_sorter = ShapeSorter()
-        self.shape_names = ['bench', 'chair']
+        self.shape_names = ['bench', 'table']
         self.true_images = {}
         self.pred_images = {}
         self.rearranged_ids = {}
