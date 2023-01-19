@@ -38,11 +38,11 @@ class Shape:
         return images
 
     def make_training_data(self):
-        max_len = 3000
+        max_len = 6000
         param_domain = []
         for param in self.param_vector_info:
             if param.param_type == 's':
-                param_domain.append(np.linspace(param.min_value, param.max_value, 5))
+                param_domain.append(np.linspace(param.min_value, param.max_value, 10))
             else:
                 param_domain.append(np.linspace(param.min_value, param.max_value, param.max_value-param.min_value+1))
         if not param_domain:

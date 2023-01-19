@@ -247,7 +247,7 @@ class Predictor(QThread):
         loss = MultiTaskLoss(self.param_vector_info)
         if torch.cuda.is_available():
             loss = loss.cuda()
-        num_epochs = 50
+        num_epochs = 20
         e = 0
         self.is_active = True
         while self.is_active and e < num_epochs:
